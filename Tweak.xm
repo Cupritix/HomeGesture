@@ -37,18 +37,18 @@ long _homeButtonType = 1;
 }
 %end
 
-// Remove carrier text
-%hook UIStatusBarServiceItemView
-- (id)_serviceContentsImage {
-    return nil;
-}
-- (CGFloat)extraRightPadding {
-    return 0.0f;
-}
-- (CGFloat)standardPadding {
-    return 2.0f;
-}
-%end
+// // Remove carrier text
+// %hook UIStatusBarServiceItemView
+// - (id)_serviceContentsImage {
+//     return nil;
+// }
+// - (CGFloat)extraRightPadding {
+//     return 0.0f;
+// }
+// - (CGFloat)standardPadding {
+//     return 2.0f;
+// }
+// %end
 
 // Workaround for status bar transition bug
 %hook CCUIOverlayStatusBarPresentationProvider
@@ -114,5 +114,20 @@ long _homeButtonType = 1;
 %hook SBWorkspaceDefaults
 - (bool)isBreadcrumbDisabled {
 	return YES;
+}
+%end
+
+// Restore old volume button behavoir
+%hook SBVolumeHardwareButton
+- (id)initWithScreenshotGestureRecognizer:(id)arg1 homeButtonType:(long long)arg2 {
+	return %orig(nil, 1);
+}
+
+// Disable iPhone X screenshot gesture
+- (BOOL)gestureRecognizerShouldBegin:(id)gesture {
+	UIGestureRecognizer *screenshotGesture = MSHookIvar<UIGestureRecognizer *>(self, "_screenshotGestureRecognizer");
+	if (gesture == screenshotGesture) return NO;
+
+	return %orig;
 }
 %end
