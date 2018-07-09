@@ -2,6 +2,7 @@ long _dismissalSlidingMode = 0;
 bool originalButton;
 long _homeButtonType = 1;
 
+//static NSInteger switcherKillStyle = 1;
 // Enable home gestures
 %hook BSPlatform
 - (NSInteger)homeButtonType {
@@ -36,19 +37,6 @@ long _homeButtonType = 1;
 	return %orig;
 }
 %end
-
-// // Remove carrier text
-// %hook UIStatusBarServiceItemView
-// - (id)_serviceContentsImage {
-//     return nil;
-// }
-// - (CGFloat)extraRightPadding {
-//     return 0.0f;
-// }
-// - (CGFloat)standardPadding {
-//     return 2.0f;
-// }
-// %end
 
 // Workaround for status bar transition bug
 %hook CCUIOverlayStatusBarPresentationProvider
@@ -115,6 +103,27 @@ long _homeButtonType = 1;
 - (bool)isBreadcrumbDisabled {
 	return YES;
 }
+%end
+
+%hook SBAppSwitcherSettings
+- (NSInteger)effectiveKillAffordanceStyle {
+
+	return 2;
+
+- (NSInteger)killAffordanceStyle {
+
+	return 2;
+}
+
+- (void)setKillAffordanceStyle:(NSInteger)style {
+
+	%orig(2);
+}
+%end
+
+// Hide Control Center indicator
+%hook SBDashBoardTeachableMomentsContainerView
+-(void)_addControlCenterGrabber {}
 %end
 
 // Restore old volume button behavoir
